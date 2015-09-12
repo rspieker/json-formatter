@@ -29,7 +29,7 @@ We've eliminated the requirement of the quotation marks, for both keys _and_ val
 <div data-config="{hello:world}">...</div>
 ```
 
-And as we had to distinct objects, arrays, keys and values anyway, we also removed the requirement for any outer braces
+And as objects, arrays, keys and values had to be distinguished anyway, the requirement for any outer brackets/braces was also eliminated.
 
 ```
 <div data-config="hello:world">...</div>
@@ -70,3 +70,17 @@ var formatted = JSONFormatter().prepare('hello:world');
 
 console.log(formatted);  //  '{"hello":"world"}'
 ```
+
+
+## Issues
+Feel free to submit [issues and enhancement requests](https://github.com/rspieker/json-formatter/issues)
+
+## Contributing
+Pull requests are more than welcome, GitHub makes this very easy:
+- Create an issue describing the change you are thinking of (it would be awkward if some else is working on the same thing)
+- Fork the [repository](https://github.com/rspieker/json-formatter)
+- Create a branch (use a concice and descriptive name)
+- Work on your change(s) and commit them
+- Create a pull request with your changes
+
+There is a pretty good [tutorial on creating pull-requests](https://help.github.com/articles/using-pull-requests/)
