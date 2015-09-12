@@ -138,7 +138,6 @@ function JSONFormatter() {
 
 				//  determine if the value needs to be quoted (always true if the next item in the list is a separator)
 				default:
-console.log(result, token, list);
 					result += addQuotation(token, list[0] === ':');
 					break;
 			}
