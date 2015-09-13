@@ -1,6 +1,6 @@
 {
   "name": "json-formatter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Format a string containing (valid) js variables into proper JSON so it can be handled by JSON.parse",
   "main": "json-formatter.js",
   "scripts": {
