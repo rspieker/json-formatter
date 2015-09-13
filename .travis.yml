@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- '4.0'
+- '0.12'
+- '0.11'
+- '0.10'
+- iojs
+after_script: ./node_modules/.bin/lab -r lcov | ./node_modules/.bin/coveralls
+notifications:
+  slack:
+    secure: x4fSog/O+/guD1FOXxafBQ844nrqOEucNvAcizQmWjawbENuyLCDv7qEzyU4BjCk//gYQ/YX1Cb+EixsIQj6o3w6iAwHoAqWn7h4TaaZzHYeNvbmFBq538R96sz+U2VIyCly5xgd6OaVKr7jtw3wiC3p2oc8Yw8c/zUDTj59T0G1l5YHjaYa7wT439FygmSjrS/7sRiNdEmvqHJS53yDFbf4CK9vAYKEIM4HDNXeYvYzh5V9Ps3wpNYKYsrdN5Ox7DrPuahODRBrX+61SZaEhzqSBUh1i5K2QiLEH8DUYSjGU+xIK7TiYR1jL3lJKDxE7ElH6eLwCY17LT0IqOiOMa1/JmFGMb/YeX4q+GWp7OhA4h/euZ8TEFZeeXPh50Gau4qGD9nkN83QNhmnvgqwEF2x0Dev7EiYR7HPoyUz3zxcu1ggugKqAo01K99scWwrP1ATvw/xC95zhApZgHPT6vg6kB/rUs9BZKR01RGxtAXwCnEqlq/rWxegr7+Bgw9ZvxyxwxZdEslC6/Kbf7bbFkhMoEXiQ1A3MPz3V8fX18Ksnp41qBGeOm51LOcFp7cAgbsQDK62m2AnUOHvThlwPbLzCIofC0wgWhyYtSvXIWDhfAxcqzinbfOGVtEUkcaqkB4RS4isoQq0gAPPr0H/JzRZje1et0Kz4+2QA44yFUM=

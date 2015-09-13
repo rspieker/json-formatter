@@ -3,8 +3,13 @@
   "version": "1.1.0",
   "description": "Format a string containing (valid) js variables into proper JSON so it can be handled by JSON.parse",
   "main": "json-formatter.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "posttest": "./node_modules/.bin/nsp audit-package",
+    "test": "./node_modules/.bin/lab -f -t 100 -m 3000",
+    "test-coverage": "./node_modules/.bin/lab -f -r html -m 3000 -o report.html"
   },
   "repository": {
     "type": "git",
@@ -22,6 +27,8 @@
   "homepage": "https://github.com/rspieker/json-formatter#readme",
   "devDependencies": {
     "code": "^1.5.0",
-    "lab": "^5.16.1"
+    "coveralls": "^2.11.4",
+    "lab": "^5.16.1",
+    "nsp": "^1.1.0"
   }
 }
