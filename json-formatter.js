@@ -4,6 +4,7 @@
  *  @author     Rogier Spieker <rogier@konfirm.eu>
  */
 (function(scope, factory) {
+	// $lab:coverage:off$
 	var name = 'JSONFormatter';
 
 	if (typeof module === 'object' && typeof module.exports === 'object') {
@@ -15,6 +16,7 @@
 	else {
 		(typeof exports === 'object' ? exports : scope)[name] = factory();
 	}
+	// $lab:coverage:on$
 })(this, function() {
 
 	function JSONFormatter() {
@@ -26,6 +28,7 @@
 
 		var formatter = this,
 			special = '\'":,{}[] ',
+			quotation = '"',
 			pattern = {
 				escape: /["\\\/\b\f\n\r\t]/,
 				noquote: /^(?:true|false|null|-?[0-9]+(?:\.[0-9]+)?)$/i,
@@ -52,7 +55,7 @@
 		 *  @return  string  JSON-token
 		 */
 		function addQuotation(token, force) {
-			var quote = '"';
+			var quote = quotation;
 
 			//  if quotation is not enforced, we must skip application of quotes for certain tokens
 			if (!force && (isSpecial(token) || pattern.noquote.test(token))) {
@@ -67,11 +70,10 @@
 		 *  @name    removeTrailing
 		 *  @access  internal
 		 *  @param   Array  result
-		 *  @return  void
-		 *  @note    This manipulates the provided array
+		 *  @return  Array  result
 		 */
 		function removeTrailing(result) {
-			return pattern.trailer.test(result) ? removeTrailing(result.substr(-1)) : result;
+			return pattern.trailer.test(result) ? removeTrailing(result.substr(0, result.length - 1)) : result;
 		}
 
 		/**
@@ -83,10 +85,11 @@
 		 *  @return  Array   result
 		 */
 		function escapeQuotedInput(token, list) {
-			var quote = '"',
-				result = [],
+			var result = [],
 				character;
 
+			//  token is the initial (opening) quotation character, we are not (yet) interested in this,
+			//  as we need to process the stuff in list, right until we find a matching token
 			while (list.length) {
 				character = list.shift();
 
@@ -109,24 +112,21 @@
 					//  with the escaping taken care of, we now know the string has ended
 					break;
 				}
-				else if (character === quote) {
-					character = '\\' + character;
-				}
 
 				result.push(character);
 			}
 
-			return addQuotation(result.join(''), true);
+			return addQuotation(result.join(''));
 		}
 
 		/**
 		 *  Compile the JSON-formatted string from a list of 'tokenized' data
-		 *  @name    compile
+		 *  @name    compiler
 		 *  @access  internal
 		 *  @param   Array   list
 		 *  @return  string  JSON-formatted
 		 */
-		function compile(list) {
+		function compiler(list) {
 			var result = '',
 				token;
 
@@ -141,7 +141,7 @@
 					//  remove any trailing commas and whitespace
 					case '}':
 					case ']':
-						result = removeTrailing(result) + token;
+						result = removeTrailing(result).concat([token]);
 						break;
 
 					//  add/remove escaping
@@ -195,13 +195,13 @@
 		 */
 		formatter.prepare = function(input) {
 			//  tokenize the input and feed it to the compiler in one go
-			return compile(tokenize(input))
+			return compiler(tokenize(input))
 				//  determine whether we are dealing with an Object or Array notation
 				.replace(/^.*?([:,]).*$/, function(match, symbol) {
 					var character = symbol === ':' ? '{}' : '[]';
 
 					//  figure out if the notation should be added or may be skipped
-					return match[0] !== character[0] ? character[0] + match + character[1] : match;
+					return match[0] !== character[0] ? character[0] + removeTrailing(match) + character[1] : match;
 				})
 			;
 		};
@@ -219,5 +219,5 @@
 	}
 
 	//  expose the interface
-	return new JSONFormatter();
+	return JSONFormatter;
 });

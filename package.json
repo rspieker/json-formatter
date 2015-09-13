@@ -1,0 +1,27 @@
+{
+  "name": "json-formatter",
+  "version": "1.1.0",
+  "description": "Format a string containing (valid) js variables into proper JSON so it can be handled by JSON.parse",
+  "main": "json-formatter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rspieker/json-formatter.git"
+  },
+  "keywords": [
+    "json",
+    "string"
+  ],
+  "author": "Rogier Spieker",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/rspieker/json-formatter/issues"
+  },
+  "homepage": "https://github.com/rspieker/json-formatter#readme",
+  "devDependencies": {
+    "code": "^1.5.0",
+    "lab": "^5.16.1"
+  }
+}
