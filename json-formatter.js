@@ -3,7 +3,10 @@
  *  @package    JSONFormatter
  *  @author     Rogier Spieker <rogier@konfirm.eu>
  */
+/*global define*/
 (function(scope, factory) {
+	'use strict';
+
 	// $lab:coverage:off$
 	var name = 'JSONFormatter';
 
@@ -16,14 +19,19 @@
 	else {
 		(typeof exports === 'object' ? exports : scope)[name] = factory();
 	}
+
 	// $lab:coverage:on$
+
 })(this, function() {
+	'use strict';
 
 	function JSONFormatter() {
 		//  Implement a Singleton pattern and allow JSONFormatter to be invoked without the `new` keyword
 		if (typeof JSONFormatter.prototype.__instance !== 'undefined' || !(this instanceof JSONFormatter)) {
 			return JSONFormatter.prototype.__instance || new JSONFormatter();
 		}
+
+		//  Maintain a reference to the first instance (which - if exists - is returned in the flow above)
 		JSONFormatter.prototype.__instance = this;
 
 		var formatter = this,
@@ -127,34 +135,47 @@
 		 *  @return  string  JSON-formatted
 		 */
 		function compiler(list) {
-			var result = '',
-				token;
+			var result = '';
 
 			while (list.length) {
-				token = list.shift();
+				result = nibble(result, list);
+			}
 
-				switch (token) {
-					//  ignore whitespace outside of quoted patterns
-					case ' ':
-						break;
+			return result;
+		}
 
-					//  remove any trailing commas and whitespace
-					case '}':
-					case ']':
-						result = removeTrailing(result).concat([token]);
-						break;
+		/**
+		 *  Nibble the next token from the list and handle it
+		 *  @name    nibble
+		 *  @access  internal
+		 *  @param   string  result
+		 *  @param   array   tokens
+		 *  @return  string  result
+		 */
+		function nibble(result, list) {
+			var token = list.shift();
 
-					//  add/remove escaping
-					case '"':
-					case '\'':
-						result += escapeQuotedInput(token, list);
-						break;
+			switch (token) {
+				//  ignore whitespace outside of quoted patterns
+				case ' ':
+					break;
 
-					//  determine if the value needs to be quoted (always true if the next item in the list is a separator)
-					default:
-						result += addQuotation(token, list[0] === ':');
-						break;
-				}
+				//  remove any trailing commas and whitespace
+				case '}':
+				case ']':
+					result = removeTrailing(result) + token;
+					break;
+
+				//  add/remove escaping
+				case '"':
+				case '\'':
+					result += escapeQuotedInput(token, list);
+					break;
+
+				//  determine if the value needs to be quoted (always true if the next item in the list is a separator)
+				default:
+					result += addQuotation(token, list[0] === ':');
+					break;
 			}
 
 			return result;
@@ -177,6 +198,7 @@
 				if (result.length === 0 || isSpecial(input[i]) || isSpecial(result[result.length - 1])) {
 					result.push(input[i]);
 				}
+
 				//  extend the previous item
 				else {
 					result[result.length - 1] += input[i];
@@ -184,6 +206,21 @@
 			}
 
 			return result;
+		}
+
+		/**
+		 *  Apply Object or Array notation (string.replace helper for an expression resulting in ':' or ',')
+		 *  @name    notation
+		 *  @access  internal
+		 *  @param   string  full match
+		 *  @param   string  matching symbol
+		 *  @return  string  wrapped
+		 */
+		function notation(match, symbol) {
+			var character = symbol === ':' ? '{}' : '[]';
+
+			//  figure out if the notation should be added or may be skipped
+			return match[0] !== character[0] ? character[0] + removeTrailing(match) + character[1] : match;
 		}
 
 		/**
@@ -196,13 +233,7 @@
 		formatter.prepare = function(input) {
 			//  tokenize the input and feed it to the compiler in one go
 			return compiler(tokenize(input))
-				//  determine whether we are dealing with an Object or Array notation
-				.replace(/^.*?([:,]).*$/, function(match, symbol) {
-					var character = symbol === ':' ? '{}' : '[]';
-
-					//  figure out if the notation should be added or may be skipped
-					return match[0] !== character[0] ? character[0] + removeTrailing(match) + character[1] : match;
-				})
+				.replace(/^.*?([:,]).*$/, notation)
 			;
 		};
 
